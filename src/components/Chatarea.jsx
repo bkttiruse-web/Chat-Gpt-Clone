@@ -1,3 +1,4 @@
+import { Paperclip, Microphone, PaperPlaneTilt } from "@phosphor-icons/react";
 import { chatHistory } from "../data/chatHistory";
 import ChatMessage from "./ChatMessage";
 
@@ -34,13 +35,17 @@ function ChatArea({ selectedChat }) {
       {/* INPUT */}
       <div className="input-area">
         <div className="input-bar">
-          <button className="icon">+</button>
+          <button className="icon">
+            <Paperclip size={22} />
+          </button>
 
-          <input type="text" placeholder="Message ChatGPT" />
+          <button className="mic">
+            <Microphone size={22} />
+          </button>
 
-          <button className="mic">🎙</button>
-
-          <button className="send">↑</button>
+          <button className="send">
+            <PaperPlaneTilt size={20} />
+          </button>
         </div>
       </div>
     </main>
