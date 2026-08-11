@@ -28,6 +28,9 @@ function Sidebar({ selectedChat, onSelectChat }) {
         <div className="menu-item">New chat</div>
 
         <div className="menu-item">Explore</div>
+        <div className="menu-item">Library</div>
+        <div className="menu-item">GPTs</div>
+        <div className="menu-item">Plugins</div>
       </div>
 
       {/* CHAT HISTORY */}

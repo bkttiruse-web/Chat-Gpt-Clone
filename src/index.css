@@ -292,10 +292,6 @@ body {
   text-align: center;
 }
 
-.main.welcome-mode > .input-area {
-  display: none;
-}
-
 .messages-container {
   width: 100%;
   max-width: 800px;
