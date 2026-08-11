@@ -1,3 +1,6 @@
+import { chatHistory } from "../data/chatHistory";
+import ChatMessage from "./ChatMessage";
+
 function ChatArea() {
   return (
     <main className="main">
