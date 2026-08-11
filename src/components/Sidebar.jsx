@@ -1,3 +1,6 @@
+import { chatHistories } from "../data/chatHistory";
+import ChatHistoryItem from "./ChatHistoryItem";
+
 function Sidebar() {
   return (
     <aside className="sidebar">
@@ -20,8 +23,11 @@ function Sidebar() {
         <div className="menu-item">Plugins</div>
       </div>
 
-      <div id="history" className="history"></div>
-
+      <div id="history" className="history">
+        {chatHistories.map((chat) => (
+          <ChatHistoryItem key={chat.conversation_id} chat={chat} />
+        ))}
+      </div>
       <div className="bottom">
         <div className="account">
           <div className="avatar">B</div>

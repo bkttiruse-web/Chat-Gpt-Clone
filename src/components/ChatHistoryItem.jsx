@@ -1,6 +1,6 @@
-function ChatHistoryItem({ chat, onClick }) {
+function ChatHistoryItem({ chat }) {
   return (
-    <div className="history-item" onClick={onClick} title={chat.title}>
+    <div className="history-item" title={chat.title}>
       {chat.title}
     </div>
   );

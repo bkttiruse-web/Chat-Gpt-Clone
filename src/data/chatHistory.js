@@ -54,3 +54,4 @@ export const chatHistory = {
     },
   },
 };
+export const chatHistories = [chatHistory];
