@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { histories } from "../data/chatHistory";
 
-function Sidebar() {
+function Sidebar({ selectedChat, onSelectChat }) {
   const [search, setSearch] = useState("");
 
   const filteredHistories = histories.filter((chat) =>
@@ -39,7 +39,13 @@ function Sidebar() {
             <div className="history-title">Chats</div>
 
             {filteredHistories.map((chat) => (
-              <div className="history-item" key={chat.id}>
+              <div
+                key={chat.id}
+                className={`history-item ${
+                  selectedChat === chat.id ? "active" : ""
+                }`}
+                onClick={() => onSelectChat(chat.id)}
+              >
                 {chat.title}
               </div>
             ))}
