@@ -11,13 +11,13 @@ function ChatArea({ selectedChat }) {
     .map((node) => node.message);
 
   return (
-    <main className={`main ${!isGreetingChat ? "welcome-mode" : ""}`}>
+    <div className="main">
       {/* HEADER */}
-      <header className="header">
-        <h2>{isGreetingChat ? chatHistory.title : "ChatGPT"}</h2>
-      </header>
+      <div className="header">
+        <h2>ChatGPT</h2>
+      </div>
 
-      {/* CONTENT */}
+      {/* CHAT CONTENT */}
       <div className="content">
         {isGreetingChat ? (
           <div className="messages-container">
@@ -50,7 +50,7 @@ function ChatArea({ selectedChat }) {
           </button>
         </div>
       </div>
-    </main>
+    </div>
   );
 }
 
