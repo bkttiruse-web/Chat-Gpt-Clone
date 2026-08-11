@@ -2,6 +2,10 @@ import { chatHistory } from "../data/chatHistory";
 import ChatMessage from "./ChatMessage";
 
 function ChatArea() {
+  const messages = Object.values(chatHistory.mapping)
+    .filter((node) => node.message)
+    .map((node) => node.message);
+
   return (
     <main className="main">
       <header className="header">
@@ -9,7 +13,11 @@ function ChatArea() {
       </header>
 
       <section className="content">
-        <h1>Ready when you are.</h1>
+        <div className="messages-container">
+          {messages.map((message) => (
+            <ChatMessage key={message.id} message={message} />
+          ))}
+        </div>
       </section>
 
       <div className="input-area">
