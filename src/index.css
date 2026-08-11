@@ -402,7 +402,7 @@ body {
 }
 
 /* =========================
-   INPUT AREA
+INPUT AREA
 ========================= */
 
 .input-area {
@@ -429,7 +429,7 @@ body {
 }
 
 .input-bar:focus-within {
-  border-color: #1628cb;
+  border-color: #3540a7;
 }
 
 .input-area input {
@@ -438,7 +438,7 @@ body {
   min-width: 0;
   background: transparent;
   border: none;
-  padding: 0 4px;
+  padding: 0 8px;
   color: #fff;
   font-size: 16px;
   outline: none;
@@ -449,7 +449,7 @@ body {
 }
 
 /* =========================
-   BUTTONS
+INPUT BUTTONS
 ========================= */
 
 .icon,
@@ -460,9 +460,11 @@ body {
   border-radius: 50%;
   border: none;
   cursor: pointer;
+
   display: flex;
   align-items: center;
   justify-content: center;
+
   flex-shrink: 0;
   transition: 0.15s;
 }
@@ -471,7 +473,6 @@ body {
 .mic {
   background: transparent;
   color: #cfcfd1;
-  font-size: 20px;
 }
 
 .icon:hover,
@@ -489,7 +490,6 @@ body {
 .send {
   background: #fff;
   color: #202123;
-  font-size: 18px;
 }
 
 .send:hover {

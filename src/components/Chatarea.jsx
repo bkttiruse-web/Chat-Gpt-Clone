@@ -39,12 +39,14 @@ function ChatArea({ selectedChat }) {
             <Paperclip size={22} />
           </button>
 
+          <input type="text" placeholder="Ask anything" />
+
           <button className="mic">
             <Microphone size={22} />
           </button>
 
           <button className="send">
-            <PaperPlaneTilt size={20} />
+            <PaperPlaneTilt size={20} weight="fill" />
           </button>
         </div>
       </div>
