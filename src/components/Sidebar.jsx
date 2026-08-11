@@ -1,37 +1,59 @@
-import { chatHistories } from "../data/chatHistory";
-import ChatHistoryItem from "./ChatHistoryItem";
+import { useState } from "react";
+import { histories } from "../data/chatHistory";
 
 function Sidebar() {
+  const [search, setSearch] = useState("");
+
+  const filteredHistories = histories.filter((chat) =>
+    chat.title.toLowerCase().includes(search.toLowerCase()),
+  );
+
   return (
     <aside className="sidebar">
+      {/* TOP */}
       <div className="sidebar-top">
-        <h2 className="GPT">ChatGPT</h2>
+        <div className="GPT">ChatGPT</div>
 
         <input
-          type="text"
           className="sidebar-search"
-          placeholder="Search..."
-          aria-label="Search chats"
+          type="text"
+          placeholder="Search"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
         />
       </div>
 
+      {/* TOOLS */}
       <div className="tools">
-        <div className="menu-item">+ New Chat</div>
-        <div className="menu-item">Images</div>
-        <div className="menu-item">Library</div>
-        <div className="menu-item">GPTs</div>
-        <div className="menu-item">Plugins</div>
+        <div className="menu-item">New chat</div>
+
+        <div className="menu-item">Explore</div>
       </div>
 
-      <div id="history" className="history">
-        {chatHistories.map((chat) => (
-          <ChatHistoryItem key={chat.conversation_id} chat={chat} />
-        ))}
+      {/* CHAT HISTORY */}
+      <div className="history">
+        {filteredHistories.length === 0 ? (
+          <div className="no-chats">No chats found</div>
+        ) : (
+          <>
+            <div className="history-title">Chats</div>
+
+            {filteredHistories.map((chat) => (
+              <div className="history-item" key={chat.id}>
+                {chat.title}
+              </div>
+            ))}
+          </>
+        )}
       </div>
+
+      {/* BOTTOM */}
       <div className="bottom">
         <div className="account">
           <div className="avatar">B</div>
-          <span className="name">Biruck</span>
+
+          <div className="name">Biruck</div>
+
           <button className="upgrade">Upgrade</button>
         </div>
       </div>
