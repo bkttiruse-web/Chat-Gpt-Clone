@@ -1,40 +1,46 @@
 import { chatHistory } from "../data/chatHistory";
 import ChatMessage from "./ChatMessage";
 
-function ChatArea() {
+function ChatArea({ selectedChat }) {
+  const isGreetingChat =
+    selectedChat === "6a70f200-569c-83ea-8d18-af32ff00a7b0";
+
   const messages = Object.values(chatHistory.mapping)
     .filter((node) => node.message)
     .map((node) => node.message);
 
   return (
-    <main className="main">
+    <main className={`main ${!isGreetingChat ? "welcome-mode" : ""}`}>
+      {/* HEADER */}
       <header className="header">
-        <h2>ChatGPT</h2>
+        <h2>{isGreetingChat ? chatHistory.title : "ChatGPT"}</h2>
       </header>
 
-      <section className="content">
-        <div className="messages-container">
-          {messages.map((message) => (
-            <ChatMessage key={message.id} message={message} />
-          ))}
-        </div>
-      </section>
+      {/* CONTENT */}
+      <div className="content">
+        {isGreetingChat ? (
+          <div className="messages-container">
+            {messages.map((message) => (
+              <ChatMessage key={message.id} message={message} />
+            ))}
+          </div>
+        ) : (
+          <div className="welcome">
+            <h1>Ready when you are.</h1>
+          </div>
+        )}
+      </div>
 
+      {/* INPUT */}
       <div className="input-area">
         <div className="input-bar">
-          <button className="icon" title="Upload">
-            +
-          </button>
+          <button className="icon">+</button>
 
-          <input type="text" placeholder="Ask anything" />
+          <input type="text" placeholder="Message ChatGPT" />
 
-          <button className="mic" title="Voice input">
-            🎤
-          </button>
+          <button className="mic">🎙</button>
 
-          <button className="send" title="Send">
-            ↑
-          </button>
+          <button className="send">↑</button>
         </div>
       </div>
     </main>
