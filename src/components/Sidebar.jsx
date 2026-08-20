@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { histories } from "../data/chatHistory";
 
-function Sidebar({ selectedChat, onSelectChat }) {
+function Sidebar({ selectedChat, onSelectChat, newChats = [] }) {
   const [search, setSearch] = useState("");
 
-  const filteredHistories = histories.filter((chat) =>
+  const allChats = [...newChats, ...histories];
+
+  const filteredHistories = allChats.filter((chat) =>
     chat.title.toLowerCase().includes(search.toLowerCase()),
   );
 
@@ -26,7 +28,6 @@ function Sidebar({ selectedChat, onSelectChat }) {
       {/* TOOLS */}
       <div className="tools">
         <div className="menu-item">New chat</div>
-
         <div className="menu-item">Explore</div>
         <div className="menu-item">Library</div>
         <div className="menu-item">GPTs</div>

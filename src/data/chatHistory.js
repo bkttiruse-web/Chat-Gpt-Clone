@@ -55,6 +55,88 @@ export const chatHistory = {
   },
 };
 
+export const reportChat = {
+  title: "Report Guidelines",
+  conversation_id: "6a6b6fa7-8934-83ea-b87c-bebb7849fdf5",
+
+  mapping: {
+    "report-user": {
+      id: "report-user",
+      message: {
+        id: "report-user",
+        author: {
+          role: "user",
+        },
+        content: {
+          content_type: "text",
+          parts: ["What are the guidelines for the report?"],
+        },
+      },
+      parent: null,
+      children: ["report-assistant"],
+    },
+
+    "report-assistant": {
+      id: "report-assistant",
+      message: {
+        id: "report-assistant",
+        author: {
+          role: "assistant",
+        },
+        content: {
+          content_type: "text",
+          parts: [
+            "You should organize the report clearly with an introduction, main content, conclusion, and references.",
+          ],
+        },
+      },
+      parent: "report-user",
+      children: [],
+    },
+  },
+};
+
+export const cssChat = {
+  title: "CSS Margin Padding Width",
+  conversation_id: "6a719c48-8ea0-83ea-b506-59185b655641",
+
+  mapping: {
+    "css-user": {
+      id: "css-user",
+      message: {
+        id: "css-user",
+        author: {
+          role: "user",
+        },
+        content: {
+          content_type: "text",
+          parts: ["What is the difference between margin, padding, and width?"],
+        },
+      },
+      parent: null,
+      children: ["css-assistant"],
+    },
+
+    "css-assistant": {
+      id: "css-assistant",
+      message: {
+        id: "css-assistant",
+        author: {
+          role: "assistant",
+        },
+        content: {
+          content_type: "text",
+          parts: [
+            "Width controls how wide an element is. Padding is the space inside an element around its content. Margin is the space outside an element.",
+          ],
+        },
+      },
+      parent: "css-user",
+      children: [],
+    },
+  },
+};
+
 export const histories = [
   {
     id: "6a6a6164-5ff4-83ea-9a78-4ae5b7817354",
@@ -170,4 +252,4 @@ export const histories = [
   },
 ];
 
-export const chatHistories = [chatHistory];
+export const chatHistories = [chatHistory, reportChat, cssChat];
