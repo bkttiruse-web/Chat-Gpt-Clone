@@ -1,12 +1,19 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Sidebar from "./components/Sidebar";
 import ChatArea from "./components/ChatArea";
-import { histories as initialHistories } from "./data/chatHistory";
 
 function App() {
   const [selectedChat, setSelectedChat] = useState(null);
   const [newChats, setNewChats] = useState([]);
-  const [histories, setHistories] = useState(initialHistories);
+  const [histories, setHistories] = useState([]);
+  useEffect(() => {
+    fetch("http://localhost:5000/conversations")
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("BACKEND DATA:", data);
+        setHistories(data);
+      });
+  }, []);
 
   const addNewChat = (message) => {
     const newChat = {
