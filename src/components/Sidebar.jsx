@@ -1,12 +1,19 @@
 import { useState } from "react";
-import { histories } from "../data/chatHistory";
+import ChatHistoryItem from "./ChatHistoryItem";
 
-function Sidebar({ selectedChat, onSelectChat, newChats = [] }) {
+function Sidebar({
+  selectedChat,
+  onSelectChat,
+  newChats = [],
+  histories = [],
+  deleteChat,
+  renameChat,
+}) {
   const [search, setSearch] = useState("");
 
   const allChats = [...newChats, ...histories];
 
-  const filteredHistories = allChats.filter((chat) =>
+  const filteredChats = allChats.filter((chat) =>
     chat.title.toLowerCase().includes(search.toLowerCase()),
   );
 
@@ -36,22 +43,21 @@ function Sidebar({ selectedChat, onSelectChat, newChats = [] }) {
 
       {/* CHAT HISTORY */}
       <div className="history">
-        {filteredHistories.length === 0 ? (
+        {filteredChats.length === 0 ? (
           <div className="no-chats">No chats found</div>
         ) : (
           <>
             <div className="history-title">Chats</div>
 
-            {filteredHistories.map((chat) => (
-              <div
+            {filteredChats.map((chat) => (
+              <ChatHistoryItem
                 key={chat.id}
-                className={`history-item ${
-                  selectedChat === chat.id ? "active" : ""
-                }`}
-                onClick={() => onSelectChat(chat.id)}
-              >
-                {chat.title}
-              </div>
+                chat={chat}
+                isActive={selectedChat === chat.id}
+                onSelect={() => onSelectChat(chat.id)}
+                onDelete={() => deleteChat(chat.id)}
+                onRename={(newTitle) => renameChat(chat.id, newTitle)}
+              />
             ))}
           </>
         )}
@@ -61,9 +67,7 @@ function Sidebar({ selectedChat, onSelectChat, newChats = [] }) {
       <div className="bottom">
         <div className="account">
           <div className="avatar">B</div>
-
           <div className="name">Biruck</div>
-
           <button className="upgrade">Upgrade</button>
         </div>
       </div>

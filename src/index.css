@@ -136,7 +136,7 @@ body {
   min-height: 34px;
   display: flex;
   align-items: center;
-  padding: 5px 12px;
+  padding: 5px 8px 5px 12px;
   margin: 2px 0;
   border-radius: 8px;
   font-size: 13px;
@@ -144,9 +144,95 @@ body {
   color: #cfcfd1;
   cursor: pointer;
   transition: 0.15s;
+  position: relative;
+  gap: 4px;
+}
+
+.history-item-title {
+  flex: 1;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* Three-dot button — hidden until hover */
+.menu-dots {
+  flex-shrink: 0;
+  background: transparent;
+  border: none;
+  color: #8e8ea0;
+  font-size: 18px;
+  line-height: 1;
+  width: 24px;
+  height: 24px;
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.15s, background 0.15s;
+}
+
+.history-item:hover .menu-dots,
+.history-item.active .menu-dots {
+  opacity: 1;
+}
+
+.menu-dots:hover {
+  background: #3e3f4b;
+  color: #fff;
+}
+
+/* Dropdown */
+.dropdown {
+  position: absolute;
+  top: calc(100% + 2px);
+  right: 4px;
+  background: #2f2f2f;
+  border: 1px solid #3e3f4b;
+  border-radius: 8px;
+  padding: 4px;
+  z-index: 100;
+  min-width: 110px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.dropdown-item {
+  display: block;
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: #cfcfd1;
+  font-size: 13px;
+  text-align: left;
+  padding: 7px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+
+.dropdown-item:hover {
+  background: #3e3f4b;
+  color: #fff;
+}
+
+.dropdown-item-delete:hover {
+  background: #4a1f1f;
+  color: #ff6b6b;
+}
+
+/* Inline rename input */
+.rename-input {
+  flex: 1;
+  background: #1a1a1a;
+  border: 1px solid #565869;
+  border-radius: 5px;
+  color: #fff;
+  font-size: 13px;
+  padding: 2px 6px;
+  outline: none;
+  min-width: 0;
 }
 
 .history-item:hover,
