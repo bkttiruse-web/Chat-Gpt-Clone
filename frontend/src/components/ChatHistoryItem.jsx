@@ -57,15 +57,43 @@ function ChatHistoryItem({
       )}
 
       {/* Three-dot button */}
-      <button
-        className="menu-dots"
-        onClick={(e) => {
-          e.stopPropagation();
-          setMenuOpen((prev) => !prev);
-        }}
-      >
-        ⋮
-      </button>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <button className="menu-dots" onClick={(e) => e.stopPropagation()}>
+            ⋮
+          </button>
+        </DropdownMenuTrigger>
+
+        <DropdownMenuContent>
+          <DropdownMenuItem
+            onClick={(e) => {
+              e.stopPropagation();
+              onTogglePin();
+            }}
+          >
+            {isPinned ? "Unpin" : "Pin"}
+          </DropdownMenuItem>
+
+          <DropdownMenuItem
+            onClick={(e) => {
+              e.stopPropagation();
+              setRenameValue(chat.title);
+              setIsRenaming(true);
+            }}
+          >
+            Rename
+          </DropdownMenuItem>
+
+          <DropdownMenuItem
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete();
+            }}
+          >
+            Delete
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
 
       {/* Dropdown */}
       {menuOpen && (
