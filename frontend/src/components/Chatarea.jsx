@@ -39,18 +39,13 @@ function ChatArea({ fetchData, selectedChat, newChats = [], onSendMessage }) {
 
     const isFirstMessage = !selectedChat;
 
-    // If no chat selected yet, create one locally (adds to newChats)
     if (isFirstMessage) {
       onSendMessage(currentMessage);
     }
 
-    // Optimistically add user message to thread
     setMessages((prev) => [...prev, userMessage]);
 
     try {
-      // 1. Persist new conversation to backend ONLY on the first message.
-      // We don't await or call fetchData() here to avoid duplicating the chat in the sidebar,
-      // because onSendMessage already added it to the local newChats array.
       if (isFirstMessage) {
         fetch(`${API_URL}/conversations`, {
           method: "POST",
@@ -81,10 +76,12 @@ function ChatArea({ fetchData, selectedChat, newChats = [], onSendMessage }) {
   };
 
   // Messages from a history conversation
-  const historyMessages = conversation && conversation.mapping ? Object.values(conversation.mapping)
-        .map((node) => node.message)
-        .filter((m) => m !== null)
-    : [];
+  const historyMessages =
+    conversation && conversation.mapping
+      ? Object.values(conversation.mapping)
+          .map((node) => node.message)
+          .filter((m) => m !== null)
+      : [];
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -129,7 +126,7 @@ function ChatArea({ fetchData, selectedChat, newChats = [], onSendMessage }) {
               </div>
             )}
           </div>
-        ) : (conversation && conversation.mapping) ? (
+        ) : conversation && conversation.mapping ? (
           <div className="messages-container">
             {historyMessages.map((msg) => (
               <ChatMessage key={msg.id} message={msg} />
@@ -171,6 +168,3 @@ function ChatArea({ fetchData, selectedChat, newChats = [], onSendMessage }) {
 }
 
 export default ChatArea;
-
-
-
