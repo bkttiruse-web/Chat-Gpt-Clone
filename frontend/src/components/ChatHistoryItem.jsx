@@ -94,47 +94,8 @@ function ChatHistoryItem({
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+  
+  
 
-      {/* Dropdown */}
-      {menuOpen && (
-        <div className="dropdown">
-          {/* Pin / Unpin */}
-          <button
-            className="dropdown-item"
-            onClick={(e) => {
-              e.stopPropagation();
-              setMenuOpen(false);
-              onTogglePin();
-            }}
-          >
-            {isPinned ? "Unpin" : "Pin"}
-          </button>
-
-          <button
-            className="dropdown-item"
-            onClick={(e) => {
-              e.stopPropagation();
-              setRenameValue(chat.title);
-              setIsRenaming(true);
-              setMenuOpen(false);
-            }}
-          >
-            Rename
-          </button>
-          <button
-            className="dropdown-item dropdown-item-delete"
-            onClick={(e) => {
-              e.stopPropagation();
-              setMenuOpen(false);
-              onDelete();
-            }}
-          >
-            Delete
-          </button>
-        </div>
-      )}
-    </div>
-  );
-}
 
 export default ChatHistoryItem;
