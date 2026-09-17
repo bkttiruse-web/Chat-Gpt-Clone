@@ -94,8 +94,8 @@ function ChatHistoryItem({
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-  
-  
-
+    </div>
+  );
+}
 
 export default ChatHistoryItem;
