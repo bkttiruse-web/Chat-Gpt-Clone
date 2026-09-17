@@ -1,6 +1,20 @@
 import { useState } from "react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
 
-function ChatHistoryItem({ chat, isActive, onSelect, onDelete, onRename, isPinned, onTogglePin }) {
+function ChatHistoryItem({
+  chat,
+  isActive,
+  onSelect,
+  onDelete,
+  onRename,
+  isPinned,
+  onTogglePin,
+}) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [isRenaming, setIsRenaming] = useState(false);
   const [renameValue, setRenameValue] = useState(chat.title);
