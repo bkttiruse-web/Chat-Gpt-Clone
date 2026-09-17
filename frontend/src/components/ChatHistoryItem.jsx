@@ -15,7 +15,6 @@ function ChatHistoryItem({
   isPinned,
   onTogglePin,
 }) {
-  const [menuOpen, setMenuOpen] = useState(false);
   const [isRenaming, setIsRenaming] = useState(false);
   const [renameValue, setRenameValue] = useState(chat.title);
 
