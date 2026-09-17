@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import Sidebar from "./components/Sidebar";
 import ChatArea from "./components/ChatArea";
+import { ErrorBoundary } from "./ErrorBoundary";
 
 function App() {
   const [selectedChat, setSelectedChat] = useState(null);
@@ -54,25 +55,27 @@ function App() {
   };
 
   return (
-    <div className="app">
-      <Sidebar
-        selectedChat={selectedChat}
-        onSelectChat={setSelectedChat}
-        newChats={newChats}
-        histories={histories}
-        deleteChat={deleteChat}
-        renameChat={renameChat}
-        pinnedIds={pinnedIds}
-        togglePin={togglePin}
-      />
+    <ErrorBoundary>
+      <div className="app">
+        <Sidebar
+          selectedChat={selectedChat}
+          onSelectChat={setSelectedChat}
+          newChats={newChats}
+          histories={histories}
+          deleteChat={deleteChat}
+          renameChat={renameChat}
+          pinnedIds={pinnedIds}
+          togglePin={togglePin}
+        />
 
-      <ChatArea
-        selectedChat={selectedChat}
-        newChats={newChats}
-        onSendMessage={addNewChat}
-        fetchData={fetchData}
-      />
-    </div>
+        <ChatArea
+          selectedChat={selectedChat}
+          newChats={newChats}
+          onSendMessage={addNewChat}
+          fetchData={fetchData}
+        />
+      </div>
+    </ErrorBoundary>
   );
 }
 

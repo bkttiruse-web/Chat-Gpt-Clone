@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import ChatHistoryItem from "./ChatHistoryItem";
 
 function Sidebar({
@@ -16,7 +16,7 @@ function Sidebar({
   const allChats = [...newChats, ...histories];
 
   const filteredChats = allChats.filter((chat) =>
-    chat.title.toLowerCase().includes(search.toLowerCase()),
+    (chat.title || "").toLowerCase().includes(search.toLowerCase()),
   );
 
   // Split into pinned and normal chats
@@ -107,3 +107,4 @@ function Sidebar({
 }
 
 export default Sidebar;
+

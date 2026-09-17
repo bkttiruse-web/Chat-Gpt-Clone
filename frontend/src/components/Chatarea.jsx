@@ -1,54 +1,97 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { Paperclip, Microphone, PaperPlaneTilt } from "@phosphor-icons/react";
-
 import ChatMessage from "./ChatMessage";
+
 const API_URL = "http://localhost:3000";
 
 function ChatArea({ fetchData, selectedChat, newChats = [], onSendMessage }) {
-  const handleSend = async () => {
-    const request = {
-      messages: message,
-    };
-    console.log("sakn", request);
+  const [message, setMessage] = useState("");
+  const [messages, setMessages] = useState([]);
+  const [conversation, setConversation] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-    const response = await fetch(`${API_URL}/conversations`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(request), // Converts JavaScript object to a JSON string
-    });
-    fetchData();
-    console.log(response);
-    const send = await fetch("http://localhost:3000/chat", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ chat: message }),
-      model: "llama 3.2:3b",
-      message: [
-        {
-          role: "user",
-          content: "hi",
-        },
-      ],
-    });
+  // When selected chat changes, reset message thread or load history
+  useEffect(() => {
+    if (!selectedChat) return;
+
+    const isNewChat = newChats.find((chat) => chat.id === selectedChat);
+    if (isNewChat) {
+      setConversation(null);
+      // Restore messages for this new chat if they exist
+      setMessages(isNewChat.messages || []);
+      return;
+    }
+
+    // History chat — fetch from backend
+    setMessages([]);
+    fetch(`${API_URL}/conversations/${selectedChat}`)
+      .then((res) => res.json())
+      .then((data) => setConversation(data));
+  }, [selectedChat]);
+
+  const handleSend = async () => {
+    if (!message.trim()) return;
+
+    const userMessage = { role: "user", content: message };
+    const currentMessage = message;
+    setMessage("");
+    setIsLoading(true);
+
+    const isFirstMessage = !selectedChat;
+
+    // If no chat selected yet, create one locally (adds to newChats)
+    if (isFirstMessage) {
+      onSendMessage(currentMessage);
+    }
+
+    // Optimistically add user message to thread
+    setMessages((prev) => [...prev, userMessage]);
+
+    try {
+      // 1. Persist new conversation to backend ONLY on the first message.
+      // We don't await or call fetchData() here to avoid duplicating the chat in the sidebar,
+      // because onSendMessage already added it to the local newChats array.
+      if (isFirstMessage) {
+        fetch(`${API_URL}/conversations`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ messages: currentMessage }),
+        }).catch((err) => console.error("Failed to persist conversation", err));
+      }
+
+      // 2. Get Ollama reply
+      const res = await fetch(`${API_URL}/chat`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: currentMessage }),
+      });
+      const data = await res.json();
+
+      const aiMessage = { role: "assistant", content: data.reply };
+      setMessages((prev) => [...prev, aiMessage]);
+    } catch (err) {
+      console.error("Send failed:", err);
+      setMessages((prev) => [
+        ...prev,
+        { role: "assistant", content: "Error: could not reach Ollama." },
+      ]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const [message, setMessage] = useState("");
-  const [conversation, setConversation] = useState(null);
-  // useEffect(() => {
-  //   if (!selectedChat) return;
-
-  //   fetch(`http://localhost:3000/conversations/${selectedChat}`)
-  //     .then((res) => res.json())
-  //     .then((data) => setConversation(data));
-  // }, [selectedChat]);
-
-  const selectedNewChat = newChats.find((chat) => chat.id === selectedChat);
-
-  const messages = conversation
-    ? Object.values(conversation.mapping)
+  // Messages from a history conversation
+  const historyMessages = conversation && conversation.mapping ? Object.values(conversation.mapping)
         .map((node) => node.message)
-        .filter((message) => message !== null)
+        .filter((m) => m !== null)
     : [];
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
+    }
+  };
 
   return (
     <div className="main">
@@ -59,22 +102,37 @@ function ChatArea({ fetchData, selectedChat, newChats = [], onSendMessage }) {
 
       {/* CHAT CONTENT */}
       <div className="content">
-        {selectedNewChat ? (
+        {messages.length > 0 ? (
           <div className="messages-container">
-            <div className="message user">
-              <div className="msg-avatar">B</div>
-
-              <div className="bubble">
-                <div className="message-label">You</div>
-
-                <div className="message-text">{selectedNewChat.message}</div>
+            {messages.map((msg, i) => (
+              <div key={i} className={`message ${msg.role}`}>
+                <div className="msg-avatar">
+                  {msg.role === "user" ? "B" : "AI"}
+                </div>
+                <div className="bubble">
+                  <div className="message-label">
+                    {msg.role === "user" ? "You" : "ChatGPT"}
+                  </div>
+                  <div className="message-text">{msg.content}</div>
+                </div>
               </div>
-            </div>
+            ))}
+            {isLoading && (
+              <div className="message assistant">
+                <div className="msg-avatar">AI</div>
+                <div className="bubble">
+                  <div className="message-label">ChatGPT</div>
+                  <div className="message-text" style={{ color: "#8e8ea0" }}>
+                    Thinking...
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
-        ) : conversation ? (
+        ) : (conversation && conversation.mapping) ? (
           <div className="messages-container">
-            {messages.map((message) => (
-              <ChatMessage key={message.id} message={message} />
+            {historyMessages.map((msg) => (
+              <ChatMessage key={msg.id} message={msg} />
             ))}
           </div>
         ) : (
@@ -96,13 +154,14 @@ function ChatArea({ fetchData, selectedChat, newChats = [], onSendMessage }) {
             placeholder="Message ChatGPT..."
             value={message}
             onChange={(e) => setMessage(e.target.value)}
+            onKeyDown={handleKeyDown}
           />
 
           <button className="mic">
             <Microphone size={22} />
           </button>
 
-          <button className="send" onClick={handleSend}>
+          <button className="send" onClick={handleSend} disabled={isLoading}>
             <PaperPlaneTilt size={20} weight="fill" />
           </button>
         </div>
@@ -112,3 +171,6 @@ function ChatArea({ fetchData, selectedChat, newChats = [], onSendMessage }) {
 }
 
 export default ChatArea;
+
+
+

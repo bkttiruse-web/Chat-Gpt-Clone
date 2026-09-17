@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,7 +23,6 @@ function ChatHistoryItem({
       onRename(renameValue.trim());
     }
     setIsRenaming(false);
-    setMenuOpen(false);
   }
 
   function handleRenameKeyDown(e) {
@@ -31,7 +30,6 @@ function ChatHistoryItem({
     if (e.key === "Escape") {
       setRenameValue(chat.title);
       setIsRenaming(false);
-      setMenuOpen(false);
     }
   }
 
@@ -60,12 +58,15 @@ function ChatHistoryItem({
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <button className="menu-dots" onClick={(e) => e.stopPropagation()}>
-            ⋮
+            ···
           </button>
         </DropdownMenuTrigger>
 
-        <DropdownMenuContent>
+        <DropdownMenuContent
+          className="min-w-[140px] bg-[#2f2f2f] border border-[#444] rounded-lg p-1 shadow-xl"
+        >
           <DropdownMenuItem
+            className="text-[#ececec] text-sm px-3 py-2 rounded-md cursor-pointer hover:bg-[#40414f] focus:bg-[#40414f] focus:text-[#ececec]"
             onClick={(e) => {
               e.stopPropagation();
               onTogglePin();
@@ -75,6 +76,7 @@ function ChatHistoryItem({
           </DropdownMenuItem>
 
           <DropdownMenuItem
+            className="text-[#ececec] text-sm px-3 py-2 rounded-md cursor-pointer hover:bg-[#40414f] focus:bg-[#40414f] focus:text-[#ececec]"
             onClick={(e) => {
               e.stopPropagation();
               setRenameValue(chat.title);
@@ -85,6 +87,7 @@ function ChatHistoryItem({
           </DropdownMenuItem>
 
           <DropdownMenuItem
+            className="text-red-400 text-sm px-3 py-2 rounded-md cursor-pointer hover:bg-[#40414f] focus:bg-[#40414f] focus:text-red-400"
             onClick={(e) => {
               e.stopPropagation();
               onDelete();
@@ -99,3 +102,4 @@ function ChatHistoryItem({
 }
 
 export default ChatHistoryItem;
+
