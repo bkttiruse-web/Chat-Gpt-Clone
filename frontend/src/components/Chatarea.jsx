@@ -14,74 +14,42 @@ function ChatArea({ fetchData, selectedChat, newChats = [], onSendMessage }) {
   useEffect(() => {
     if (!selectedChat) return;
 
-    const isNewChat = newChats.find((chat) => chat.id === selectedChat);
-    if (isNewChat) {
-      setConversation(null);
-      // Restore messages for this new chat if they exist
-      setMessages(isNewChat.messages || []);
-      return;
-    }
+    const chat = newChats.find((chat) => chat.id === selectedChat);
 
-    // History chat — fetch from backend
-    setMessages([]);
-    fetch(`${API_URL}/conversations/${selectedChat}`)
-      .then((res) => res.json())
-      .then((data) => setConversation(data));
-  }, [selectedChat]);
+    if (chat) {
+      setMessages(chat.messages || []);
+    }
+  }, [selectedChat, newChats]);
 
   const handleSend = async () => {
     if (!message.trim()) return;
 
-    const userMessage = { role: "user", content: message };
     const currentMessage = message;
     setMessage("");
-    setIsLoading(true);
 
-    const isFirstMessage = !selectedChat;
-
-    if (isFirstMessage) {
+    if (!selectedChat) {
       onSendMessage(currentMessage);
     }
 
-    setMessages((prev) => [...prev, userMessage]);
+    setMessages((prev) => [...prev, { role: "user", content: currentMessage }]);
 
     try {
-      if (isFirstMessage) {
-        fetch(`${API_URL}/conversations`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ messages: currentMessage }),
-        }).catch((err) => console.error("Failed to persist conversation", err));
-      }
-
-      // 2. Get Ollama reply
       const res = await fetch(`${API_URL}/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: currentMessage }),
       });
+
       const data = await res.json();
 
-      const aiMessage = { role: "assistant", content: data.reply };
-      setMessages((prev) => [...prev, aiMessage]);
-    } catch (err) {
-      console.error("Send failed:", err);
       setMessages((prev) => [
         ...prev,
-        { role: "assistant", content: "Error: could not reach Ollama." },
+        { role: "assistant", content: data.reply },
       ]);
-    } finally {
-      setIsLoading(false);
+    } catch (err) {
+      console.error(err);
     }
   };
-
-  // Messages from a history conversation
-  const historyMessages =
-    conversation && conversation.mapping
-      ? Object.values(conversation.mapping)
-          .map((node) => node.message)
-          .filter((m) => m !== null)
-      : [];
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -89,7 +57,6 @@ function ChatArea({ fetchData, selectedChat, newChats = [], onSendMessage }) {
       handleSend();
     }
   };
-
   return (
     <div className="main">
       {/* HEADER */}

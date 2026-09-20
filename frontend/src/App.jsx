@@ -7,6 +7,9 @@ function App() {
   const [selectedChat, setSelectedChat] = useState(null);
   const [newChats, setNewChats] = useState([]);
   const [pinnedIds, setPinnedIds] = useState([]);
+  const handleNewChat = () => {
+    setSelectedChat(null);
+  };
 
   const togglePin = (id) => {
     setPinnedIds((prev) =>
@@ -59,6 +62,7 @@ function App() {
       <div className="app">
         <Sidebar
           selectedChat={selectedChat}
+          onNewChat={handleNewChat}
           onSelectChat={setSelectedChat}
           newChats={newChats}
           histories={histories}
