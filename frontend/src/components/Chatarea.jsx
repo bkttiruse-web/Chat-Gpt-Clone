@@ -12,7 +12,10 @@ function ChatArea({ fetchData, selectedChat, newChats = [], onSendMessage }) {
 
   // When selected chat changes, reset message thread or load history
   useEffect(() => {
-    if (!selectedChat) return;
+    if (!selectedChat) {
+      setMessages([]);
+      return;
+    }
 
     const chat = newChats.find((chat) => chat.id === selectedChat);
 

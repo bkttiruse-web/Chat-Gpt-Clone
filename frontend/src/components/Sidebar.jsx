@@ -4,6 +4,7 @@ import ChatHistoryItem from "./ChatHistoryItem";
 function Sidebar({
   selectedChat,
   onSelectChat,
+  onNewChat,
   newChats = [],
   histories = [],
   deleteChat,
@@ -20,8 +21,12 @@ function Sidebar({
   );
 
   // Split into pinned and normal chats
-  const pinnedChats = filteredChats.filter((chat) => pinnedIds.includes(chat.id));
-  const normalChats = filteredChats.filter((chat) => !pinnedIds.includes(chat.id));
+  const pinnedChats = filteredChats.filter((chat) =>
+    pinnedIds.includes(chat.id),
+  );
+  const normalChats = filteredChats.filter(
+    (chat) => !pinnedIds.includes(chat.id),
+  );
 
   return (
     <aside className="sidebar">
@@ -40,7 +45,9 @@ function Sidebar({
 
       {/* TOOLS */}
       <div className="tools">
-        <div className="menu-item">New chat</div>
+        <div className="menu-item" onClick={onNewChat}>
+          New chat
+        </div>
         <div className="menu-item">Explore</div>
         <div className="menu-item">Library</div>
         <div className="menu-item">GPTs</div>
@@ -107,4 +114,3 @@ function Sidebar({
 }
 
 export default Sidebar;
-
