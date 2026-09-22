@@ -13,6 +13,7 @@ function Sidebar({
   togglePin,
 }) {
   const [search, setSearch] = useState("");
+  console.log("Sidebar histories:", histories);
 
   const allChats = [...newChats, ...histories];
 
