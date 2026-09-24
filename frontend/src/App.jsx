@@ -28,14 +28,8 @@ function App() {
     fetchData();
   }, []);
 
-  const addNewChat = (message) => {
-    const newChat = {
-      id: Date.now(),
-      title: message,
-      message: message,
-    };
-    setNewChats((prev) => [newChat, ...prev]);
-    setSelectedChat(newChat.id);
+  const addNewChat = (backendId) => {
+    setSelectedChat(backendId);
   };
 
   const deleteChat = (id) => {
@@ -84,3 +78,4 @@ function App() {
 }
 
 export default App;
+

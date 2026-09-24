@@ -1,56 +1,125 @@
-﻿import { useState, useEffect } from "react";
+﻿import { useState, useEffect, useRef } from "react";
 import { Paperclip, Microphone, PaperPlaneTilt } from "@phosphor-icons/react";
-import ChatMessage from "./ChatMessage";
 
 const API_URL = "http://localhost:3000";
 
-function ChatArea({ fetchData, selectedChat, newChats = [], onSendMessage }) {
+function ChatArea({ fetchData, selectedChat, onSendMessage }) {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
-  const [conversation, setConversation] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  // When selected chat changes, reset message thread or load history
+  // Cache messages per chat so switching away and back preserves them
+  const messageCacheRef = useRef({});
+  // Backend conversation ID for the current chat
+  const convIdRef = useRef(null);
+  // Skip next useEffect to prevent wiping messages during first-message flow
+  const skipEffectRef = useRef(false);
+  const handleVoice = () => {
+    const SpeechRecognition =
+      window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    const recognition = new SpeechRecognition();
+
+    recognition.lang = "en-US";
+
+    recognition.onresult = (event) => {
+      setMessage(event.results[0][0].transcript);
+    };
+
+    recognition.start();
+  };
+
+  // Save messages to cache whenever they update
   useEffect(() => {
-    if (!selectedChat) {
-      setMessages([]);
+    if (selectedChat && messages.length > 0) {
+      messageCacheRef.current[selectedChat] = messages;
+    }
+  }, [messages, selectedChat]);
+
+  // Load messages when selected chat changes
+  useEffect(() => {
+    if (skipEffectRef.current) {
+      skipEffectRef.current = false;
       return;
     }
 
-    const chat = newChats.find((chat) => chat.id === selectedChat);
-
-    if (chat) {
-      setMessages(chat.messages || []);
+    if (!selectedChat) {
+      setMessages([]);
+      convIdRef.current = null;
+      return;
     }
-  }, [selectedChat, newChats]);
+
+    // Check cache first (for switching back to a chat you already opened)
+    if (messageCacheRef.current[selectedChat]?.length > 0) {
+      setMessages(messageCacheRef.current[selectedChat]);
+      convIdRef.current = selectedChat;
+      return;
+    }
+
+    // Fetch conversation from backend (works for both hardcoded history and Ollama chats)
+    convIdRef.current = selectedChat;
+    setMessages([]);
+    fetch(`${API_URL}/conversations/${selectedChat}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data && data.mapping) {
+          const msgs = Object.values(data.mapping)
+            .map((node) => node.message)
+            .filter((m) => m !== null)
+            .map((m) => ({
+              role: m.author.role,
+              content: m.content.parts.join(""),
+            }));
+          setMessages(msgs);
+        }
+      })
+      .catch(() => {});
+  }, [selectedChat]);
 
   const handleSend = async () => {
     if (!message.trim()) return;
 
     const currentMessage = message;
     setMessage("");
+    setIsLoading(true);
 
-    if (!selectedChat) {
-      onSendMessage(currentMessage);
-    }
+    const isFirstMessage = !selectedChat;
 
+    // Optimistically show user message
     setMessages((prev) => [...prev, { role: "user", content: currentMessage }]);
 
     try {
       const res = await fetch(`${API_URL}/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: currentMessage }),
+        body: JSON.stringify({
+          message: currentMessage,
+          conversationId: convIdRef.current,
+        }),
       });
-
       const data = await res.json();
 
+      // Add AI reply
       setMessages((prev) => [
         ...prev,
         { role: "assistant", content: data.reply },
       ]);
+
+      // First message: backend already created the sidebar entry, refresh and select it
+      if (isFirstMessage && data.conversationId) {
+        convIdRef.current = data.conversationId;
+        skipEffectRef.current = true;
+        fetchData();
+        onSendMessage(data.conversationId);
+      }
     } catch (err) {
-      console.error(err);
+      console.error("Send failed:", err);
+      setMessages((prev) => [
+        ...prev,
+        { role: "assistant", content: "Error: could not reach Ollama." },
+      ]);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -60,6 +129,7 @@ function ChatArea({ fetchData, selectedChat, newChats = [], onSendMessage }) {
       handleSend();
     }
   };
+
   return (
     <div className="main">
       {/* HEADER */}
@@ -96,12 +166,6 @@ function ChatArea({ fetchData, selectedChat, newChats = [], onSendMessage }) {
               </div>
             )}
           </div>
-        ) : conversation && conversation.mapping ? (
-          <div className="messages-container">
-            {historyMessages.map((msg) => (
-              <ChatMessage key={msg.id} message={msg} />
-            ))}
-          </div>
         ) : (
           <div className="welcome">
             <h1>Ready when you are.</h1>
@@ -124,7 +188,7 @@ function ChatArea({ fetchData, selectedChat, newChats = [], onSendMessage }) {
             onKeyDown={handleKeyDown}
           />
 
-          <button className="mic">
+          <button className="mic" onClick={handleVoice}>
             <Microphone size={22} />
           </button>
 
